@@ -2,8 +2,8 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { Club, Player, UserStats } from '../types';
-import { CLUBS } from '../data/clubs';
-import { PLAYERS, getCommonPlayers, validatePlayerGuess, normalizeString } from '../data/players';
+import { CLUBS, isPopularClub } from '../data/clubs';
+import { PLAYERS, getCommonPlayers, validatePlayerGuess, normalizeString, getEligibleClubPairs } from '../data/players';
 import { ClubEmblem } from './ClubEmblem';
 import { sound } from '../services/soundService';
 import { recordGamePlayed, getTodayDateStr, saveUserStats } from '../services/storageService';
@@ -53,20 +53,9 @@ export const DailyChallenge: React.FC<DailyChallengeProps> = ({
   const [usedHint, setUsedHint] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
 
-  // Generate 10 deterministic daily questions based on today's date
+  // Generate 10 deterministic daily questions based on today's date (Popular clubs only)
   const dailyQuestions: DailyQuestion[] = useMemo(() => {
-    const clubKeys = Object.keys(CLUBS);
-    const validPairs: [string, string][] = [];
-    for (let i = 0; i < clubKeys.length; i++) {
-      for (let j = i + 1; j < clubKeys.length; j++) {
-        const c1 = clubKeys[i];
-        const c2 = clubKeys[j];
-        const common = getCommonPlayers(c1, c2);
-        if (common.length > 0) {
-          validPairs.push([c1, c2]);
-        }
-      }
-    }
+    const validPairs = getEligibleClubPairs(CLUBS, isPopularClub, 'standard');
 
     // Hash today's date string into a deterministic number
     let hash = 0;

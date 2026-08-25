@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { Club, Player, UserStats } from '../types';
-import { CLUBS } from '../data/clubs';
-import { PLAYERS, getCommonPlayers, validatePlayerGuess, normalizeString } from '../data/players';
+import { CLUBS, isPopularClub } from '../data/clubs';
+import { PLAYERS, getCommonPlayers, validatePlayerGuess, normalizeString, getEligibleClubPairs } from '../data/players';
 import { ClubEmblem } from './ClubEmblem';
 import { sound } from '../services/soundService';
 import { recordGamePlayed, useJoker } from '../services/storageService';
@@ -58,23 +58,12 @@ export const Game321: React.FC<Game321Props> = ({
   const [timeTaken, setTimeTaken] = useState(0);
   const [jokerLetterText, setJokerLetterText] = useState<string | null>(null);
   const [jokerFilterText, setJokerFilterText] = useState<string | null>(null);
+  const [difficulty, setDifficulty] = useState<'standard' | 'hard'>('standard');
 
-  // Pre-filter valid club pairs that actually share common players
+  // Pre-filter valid club pairs that actually share common players (Standard: only well-known clubs, Hard: all clubs)
   const validClubPairs = useMemo(() => {
-    const clubKeys = Object.keys(CLUBS);
-    const pairs: [string, string][] = [];
-    for (let i = 0; i < clubKeys.length; i++) {
-      for (let j = i + 1; j < clubKeys.length; j++) {
-        const c1 = clubKeys[i];
-        const c2 = clubKeys[j];
-        const common = getCommonPlayers(c1, c2);
-        if (common.length > 0) {
-          pairs.push([c1, c2]);
-        }
-      }
-    }
-    return pairs;
-  }, []);
+    return getEligibleClubPairs(CLUBS, isPopularClub, difficulty);
+  }, [difficulty]);
 
   // Generate new random club pair
   const generateNewRound = useCallback(() => {
@@ -230,6 +219,44 @@ export const Game321: React.FC<Game321Props> = ({
         </button>
 
         <div className="flex items-center gap-4 text-xs font-medium">
+          {/* Difficulty Level Toggle */}
+          <div className="flex items-center bg-zinc-950 p-1 rounded-xl border border-zinc-800">
+            <button
+              onClick={() => {
+                if (difficulty !== 'standard') {
+                  sound.playClick();
+                  setDifficulty('standard');
+                }
+              }}
+              title="Sadece herkesin bildiği popüler ve büyük kulüpler gelir"
+              className={`px-2.5 py-1 rounded-lg text-[11px] font-black transition cursor-pointer flex items-center gap-1 ${
+                difficulty === 'standard'
+                  ? 'bg-emerald-500 text-zinc-950 shadow-sm'
+                  : 'text-zinc-400 hover:text-white'
+              }`}
+            >
+              <span>🌟</span>
+              <span>Popüler Kulüpler</span>
+            </button>
+            <button
+              onClick={() => {
+                if (difficulty !== 'hard') {
+                  sound.playClick();
+                  setDifficulty('hard');
+                }
+              }}
+              title="Daha zor transferler ve az bilinen takımlar da dahil"
+              className={`px-2.5 py-1 rounded-lg text-[11px] font-black transition cursor-pointer flex items-center gap-1 ${
+                difficulty === 'hard'
+                  ? 'bg-amber-500 text-zinc-950 shadow-sm'
+                  : 'text-zinc-400 hover:text-white'
+              }`}
+            >
+              <span>🔥</span>
+              <span>Zor Seviye</span>
+            </button>
+          </div>
+
           <div className="flex items-center gap-1.5 text-zinc-300">
             <span className="text-zinc-500">Tur:</span>
             <span className="font-bold text-white bg-zinc-800 px-2 py-0.5 rounded-md">

@@ -106,3 +106,51 @@ export function validatePlayerGuess(
   }
   return null;
 }
+
+// Pre-computed club pairs cache
+let standardPairsCache: [string, string][] | null = null;
+let hardPairsCache: [string, string][] | null = null;
+
+export function getEligibleClubPairs(
+  clubsMap: Record<string, any>,
+  popularClubChecker: (id: string) => boolean,
+  difficulty: 'standard' | 'hard' = 'standard'
+): [string, string][] {
+  if (difficulty === 'standard' && standardPairsCache) {
+    return standardPairsCache;
+  }
+  if (difficulty === 'hard' && hardPairsCache) {
+    return hardPairsCache;
+  }
+
+  const allClubKeys = Object.keys(clubsMap);
+  const pairs: [string, string][] = [];
+
+  for (let i = 0; i < allClubKeys.length; i++) {
+    for (let j = i + 1; j < allClubKeys.length; j++) {
+      const c1 = allClubKeys[i];
+      const c2 = allClubKeys[j];
+
+      // In standard mode, only pair popular well-known clubs so questions are high quality and recognizable
+      if (difficulty === 'standard') {
+        if (!popularClubChecker(c1) || !popularClubChecker(c2)) {
+          continue;
+        }
+      }
+
+      const common = getCommonPlayers(c1, c2);
+      if (common.length > 0) {
+        pairs.push([c1, c2]);
+      }
+    }
+  }
+
+  if (difficulty === 'standard') {
+    standardPairsCache = pairs;
+  } else {
+    hardPairsCache = pairs;
+  }
+
+  return pairs;
+}
+

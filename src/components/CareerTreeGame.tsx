@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { Player, UserStats } from '../types';
 import { PLAYERS } from '../data/players';
-import { CLUBS } from '../data/clubs';
+import { CLUBS, isPopularClub } from '../data/clubs';
 import { ClubEmblem } from './ClubEmblem';
 import { sound } from '../services/soundService';
 import { recordGamePlayed, saveUserStats } from '../services/storageService';
@@ -20,9 +20,9 @@ export const CareerTreeGame: React.FC<CareerTreeGameProps> = ({
   onUpdateStats,
   onBackToHome,
 }) => {
-  // Players with at least 3 clubs in the dataset
+  // Players with at least 3 clubs in the dataset and recognizable teams
   const eligiblePlayers = useMemo(() => {
-    return PLAYERS.filter((p) => p.clubs.length >= 3);
+    return PLAYERS.filter((p) => p.clubs.length >= 3 && p.clubs.some((c) => isPopularClub(c)));
   }, []);
 
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);

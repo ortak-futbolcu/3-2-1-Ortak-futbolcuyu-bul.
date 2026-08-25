@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { Player, UserStats } from '../types';
 import { PLAYERS, normalizeString, matchesPlayer } from '../data/players';
-import { CLUBS } from '../data/clubs';
+import { CLUBS, isPopularClub } from '../data/clubs';
 import { sound } from '../services/soundService';
 import { recordMysteryResult } from '../services/storageService';
 import {
@@ -67,7 +67,7 @@ export const MysteryPlayerGame: React.FC<MysteryPlayerGameProps> = ({
 
   // Filter eligible players with well-known clubs
   const mysteryCandidates = useMemo(() => {
-    return PLAYERS.filter((p) => p.clubs.length >= 2 && p.famousNumber);
+    return PLAYERS.filter((p) => p.clubs.length >= 2 && p.famousNumber && p.clubs.some((c) => isPopularClub(c)));
   }, []);
 
   const startNewGame = () => {

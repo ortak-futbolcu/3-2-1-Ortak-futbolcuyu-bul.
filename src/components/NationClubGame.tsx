@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import confetti from 'canvas-confetti';
 import { Club, Player, UserStats } from '../types';
 import { PLAYERS, validatePlayerGuess, normalizeString } from '../data/players';
-import { CLUBS } from '../data/clubs';
+import { CLUBS, isPopularClub } from '../data/clubs';
 import { ClubEmblem } from './ClubEmblem';
 import { sound } from '../services/soundService';
 import { recordGamePlayed } from '../services/storageService';
@@ -55,7 +55,7 @@ export const NationClubGame: React.FC<NationClubGameProps> = ({
       });
     });
 
-    return Array.from(pairsMap.values()).filter((item) => CLUBS[item.clubId]);
+    return Array.from(pairsMap.values()).filter((item) => CLUBS[item.clubId] && isPopularClub(item.clubId));
   }, []);
 
   const generateNewRound = useCallback(() => {

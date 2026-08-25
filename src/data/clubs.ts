@@ -1980,3 +1980,50 @@ export const LEAGUES = [
   { id: 'netherlands', name: 'Eredivisie (NED)', flag: '🇳🇱' },
   { id: 'world', name: 'Dünya & Diğer Ligler', flag: '🌎' },
 ];
+
+// Top-tier / popular clubs that are widely recognized by football fans
+export const POPULAR_CLUB_IDS = new Set<string>([
+  // Türkiye
+  'galatasaray', 'fenerbahce', 'besiktas', 'trabzonspor', 'basaksehir',
+  'samsunspor', 'goztepe', 'antalyaspor', 'sivasspor', 'konyaspor',
+  'adana_demirspor', 'kayserispor', 'kasimpasa', 'ankaragucu',
+  'bursaspor', 'eskisehirspor', 'genclerbirligi', 'altay', 'gaziantep_fk',
+  'alanyaspor', 'rize_spor', 'karagumruk',
+  // İngiltere
+  'manchester_city', 'arsenal', 'liverpool', 'manchester_united', 'chelsea',
+  'tottenham', 'newcastle', 'aston_villa', 'west_ham', 'everton',
+  'brighton', 'leicester', 'leicester_city', 'leeds', 'leeds_united',
+  'southampton', 'wolves', 'crystal_palace', 'fulham', 'brentford',
+  'bournemouth', 'nottingham_forest', 'sunderland', 'blackburn',
+  // İspanya
+  'real_madrid', 'barcelona', 'atletico_madrid', 'sevilla', 'valencia',
+  'villarreal', 'real_sociedad', 'athletic_bilbao', 'real_betis', 'celta_vigo',
+  'espanyol', 'deportivo', 'mallorca', 'girona', 'malaga', 'getafe', 'osasuna',
+  // İtalya
+  'inter', 'milan', 'juventus', 'roma', 'napoli', 'lazio', 'fiorentina',
+  'atalanta', 'torino', 'sampdoria', 'genoa', 'parma', 'udinese', 'bologna',
+  'sassuolo', 'palermo', 'cagliari',
+  // Almanya
+  'bayern_munchen', 'borussia_dortmund', 'bayer_leverkusen', 'rb_leipzig',
+  'eintracht_frankfurt', 'schalke', 'schalke_04', 'wolfsburg', 'stuttgart',
+  'borussia_monchengladbach', 'werder_bremen', 'hamburg', 'hoffenheim',
+  'hertha_berlin', 'freiburg', 'union_berlin', 'mainz', 'koln', 'cologne',
+  // Fransa
+  'psg', 'marseille', 'lyon', 'monaco', 'lille', 'rennes', 'nice',
+  'bordeaux', 'saint_etienne', 'lens', 'nantes', 'strasbourg', 'montpellier', 'toulouse',
+  // Portekiz
+  'benfica', 'porto', 'sporting', 'sporting_cp', 'braga', 'vitoria_guimaraes', 'boavista',
+  // Hollanda
+  'ajax', 'psv', 'feyenoord', 'az_alkmaar', 'twente', 'utrecht',
+  // Dünya & Diğer
+  'celtic', 'rangers', 'olympiacos', 'panathinaikos', 'paok',
+  'shakhtar', 'shakhtar_donetsk', 'dynamo_kyiv', 'salzburg', 'club_brugge',
+  'anderlecht', 'zenit', 'boca_juniors', 'river_plate', 'santos', 'flamengo',
+  'palmeiras', 'sao_paulo', 'corinthians', 'gremio', 'internacional',
+  'al_hilal', 'al_nassr', 'al_ittihad', 'al_ahli', 'inter_miami', 'la_galaxy'
+]);
+
+export function isPopularClub(clubId: string): boolean {
+  return POPULAR_CLUB_IDS.has(clubId);
+}
+
